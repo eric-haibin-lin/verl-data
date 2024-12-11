@@ -1,3 +1,10 @@
+commit:
+50ac7252f97cf39997344237bca74162b2dc6d79
+
+command:
+bash run_gemma.sh "trainer.n_gpus_per_node=1 actor_rollout_ref.rollout.tensor_model_parallel_size=1 trainer.logger=['console'] critic.model.path=Qwen/Qwen2.5-0.5B-Instruct actor_rollout_ref.model.path=Qwen/Qwen2.5-0.5B-Instruct data.train_batch_size=256 actor_rollout_ref.actor.ppo_mini_batch_size=64 actor_rollout_ref.actor.ppo_micro_batch_size=2 critic.ppo_micro_batch_size=2"
+
+
 2024-12-10 06:50:29,276	INFO worker.py:1752 -- Started a local Ray instance.
 [36m(main_task pid=54569)[0m {'actor_rollout_ref': {'actor': {'clip_ratio': 0.2,
 [36m(main_task pid=54569)[0m                                  'entropy_coeff': 0.001,
