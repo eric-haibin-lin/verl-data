@@ -3,7 +3,7 @@ Schema:
 "data_source": data_source,
 "prompt": [{
     "role": "user",
-    "content": question
+    "content": (str) question
 }],
 "ability": "math",
 "reward_model": {
@@ -13,6 +13,7 @@ Schema:
 "extra_info": {
     'split': split,
     'index': idx,
-    'answer': answer
+    'answer': (str) answer
+    'question': (str) question
 }
 ```
