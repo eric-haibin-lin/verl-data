@@ -1,0 +1,135 @@
+# ~60 GB memory
+commit:
+d60f843 (excluding changes from commit c7534db2d9ec8db4f1eb8470ce6bce473020930b)
+
+command:
+```bash
+bash examples/sft/gsm8k/run_gemma_2b.sh 2 $from_ckpt_path model.partial_pretrain=google/gemma-2-2b-it trainer.experiment_name=gsm8k-sft-gemma-2-2b-it
+```
+
+env:
+```bash
+pip3 list | grep flash
+flash_attn                        2.5.8
+vllm-flash-attn                   2.6.1
+```
+
++ '[' 6 -lt 2 ']'
++ nproc_per_node=2
++ shift 2
++ torchrun --standalone --nnodes=1 --nproc_per_node=2 -m verl.trainer.fsdp_sft_trainer data.train_files=train.parquet data.val_files=test.parquet data.prompt_key=extra_info data.response_key=extra_info '+data.prompt_dict_keys=[question]' '+data.response_dict_keys=[answer]' data.micro_batch_size=8 model.partial_pretrain=google/gemma-2b-it trainer.default_local_dir=sft_gemma2_ckpt trainer.project_name=gsm8k-sft trainer.experiment_name=gsm8k-sft-gemma-2b-it trainer.total_epochs=2 'trainer.logger=[console,wandb]' trainer.default_hdfs_dir=null data.train_files=verl-data/gsm8k/train.parquet data.val_files=verl-data/gsm8k/test.parquet model.partial_pretrain=google/gemma-2-2b-it trainer.experiment_name=gsm8k-sft-gemma-2-2b-it
+W1217 07:20:03.820820 140031002564416 torch/distributed/run.py:779] 
+W1217 07:20:03.820820 140031002564416 torch/distributed/run.py:779] *****************************************
+W1217 07:20:03.820820 140031002564416 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1217 07:20:03.820820 140031002564416 torch/distributed/run.py:779] *****************************************
+verl/verl/utils/tokenizer.py:52: UserWarning: Found gemma-2-2b-it tokenizer. Set eos_token and eos_token_id to <end_of_turn> and 107.
+  warnings.warn('Found gemma-2-2b-it tokenizer. Set eos_token and eos_token_id to <end_of_turn> and 107.')
+verl/verl/utils/tokenizer.py:52: UserWarning: Found gemma-2-2b-it tokenizer. Set eos_token and eos_token_id to <end_of_turn> and 107.
+  warnings.warn('Found gemma-2-2b-it tokenizer. Set eos_token and eos_token_id to <end_of_turn> and 107.')
+Normalize batch size by dp 2
+Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Gemma2ForCausalLM is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Gemma2ForCausalLM is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Gemma2Model is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`
+Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Gemma2Model is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:04,  5.00s/it]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:04,  5.00s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.26s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.67s/it]
+
+Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.27s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.68s/it]
+functools.partial(<function transformer_auto_wrap_policy at 0x7f3644e43040>, transformer_layer_cls={<class 'transformers.models.gemma2.modeling_gemma2.Gemma2DecoderLayer'>})
+NCCL version 2.20.5+cuda12.4
+Number of steps/epoch 29, number of epochs 2, total number of steps 58
+{'data': {'train_batch_size': 128, 'micro_batch_size': 4, 'train_files': 'verl-data/gsm8k/train.parquet', 'val_files': 'verl-data/gsm8k/test.parquet', 'prompt_key': 'extra_info', 'response_key': 'extra_info', 'max_length': 1024, 'truncation': 'error', 'balance_dp_token': False, 'chat_template': None, 'prompt_dict_keys': ['question'], 'response_dict_keys': ['answer']}, 'model': {'partial_pretrain': 'google/gemma-2-2b-it', 'fsdp_config': {'wrap_policy': {'min_num_params': 0}, 'cpu_offload': False, 'offload_params': False}, 'external_lib': None, 'enable_gradient_checkpointing': False, 'trust_remote_code': False}, 'optim': {'lr': 1e-05, 'betas': [0.9, 0.95], 'weight_decay': 0.01, 'warmup_steps_ratio': 0.1, 'clip_grad': 1.0}, 'trainer': {'default_local_dir': 'sft_gemma2_ckpt', 'default_hdfs_dir': None, 'resume_path': None, 'project_name': 'gsm8k-sft', 'experiment_name': 'gsm8k-sft-gemma-2-2b-it', 'total_epochs': 2, 'logger': ['console', 'wandb'], 'seed': 1}}
+It is strongly recommended to train Gemma2 models with the `eager` attention implementation instead of `flash_attention_2`. Use `eager` with `AutoModelForCausalLM.from_pretrained('<path-to-checkpoint>', attn_implementation='eager')`.
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: verl (verl-team). Use `wandb login --relogin` to force relogin
+wandb: - Waiting for wandb.init()...
+wandb: \ Waiting for wandb.init()...
+wandb: Tracking run with wandb version 0.18.7
+wandb: Run data is saved locally in verl/wandb/run-20241217_072147-qfm6f7w2
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run gsm8k-sft-gemma-2-2b-it
+wandb: ⭐️ View project at https://wandb.ai/verl-team/gsm8k-sft
+wandb: 🚀 View run at https://wandb.ai/verl-team/gsm8k-sft/runs/qfm6f7w2
+Using LocalLogger is deprecated. The constructor API will change 
+It is strongly recommended to train Gemma2 models with the `eager` attention implementation instead of `flash_attention_2`. Use `eager` with `AutoModelForCausalLM.from_pretrained('<path-to-checkpoint>', attn_implementation='eager')`.
+step:0 - train/loss:0.046 - train/lr(1e-3):0.002
+step:1 - train/loss:0.031 - train/lr(1e-3):0.004
+step:2 - train/loss:0.033 - train/lr(1e-3):0.006
+step:3 - train/loss:0.021 - train/lr(1e-3):0.008
+step:4 - train/loss:0.024 - train/lr(1e-3):0.010
+step:5 - train/loss:0.026 - train/lr(1e-3):0.010
+step:6 - train/loss:0.014 - train/lr(1e-3):0.010
+step:7 - train/loss:0.013 - train/lr(1e-3):0.010
+step:8 - train/loss:0.014 - train/lr(1e-3):0.010
+step:9 - train/loss:0.015 - train/lr(1e-3):0.010
+step:10 - train/loss:0.011 - train/lr(1e-3):0.010
+step:11 - train/loss:0.017 - train/lr(1e-3):0.010
+step:12 - train/loss:0.018 - train/lr(1e-3):0.009
+step:13 - train/loss:0.018 - train/lr(1e-3):0.009
+step:14 - train/loss:0.014 - train/lr(1e-3):0.009
+step:15 - train/loss:0.012 - train/lr(1e-3):0.009
+step:16 - train/loss:0.014 - train/lr(1e-3):0.009
+step:17 - train/loss:0.009 - train/lr(1e-3):0.009
+step:18 - train/loss:0.014 - train/lr(1e-3):0.008
+step:19 - train/loss:0.012 - train/lr(1e-3):0.008
+step:20 - train/loss:0.009 - train/lr(1e-3):0.008
+step:21 - train/loss:0.011 - train/lr(1e-3):0.008
+step:22 - train/loss:0.012 - train/lr(1e-3):0.007
+step:23 - train/loss:0.021 - train/lr(1e-3):0.007
+step:24 - train/loss:0.011 - train/lr(1e-3):0.007
+step:25 - train/loss:0.008 - train/lr(1e-3):0.007
+step:26 - train/loss:0.013 - train/lr(1e-3):0.006
+step:27 - train/loss:0.010 - train/lr(1e-3):0.006
+step:28 - train/loss:0.013 - train/lr(1e-3):0.006
+step:29 - val/loss:0.420
+/usr/local/lib/python3.9/dist-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py:689: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .
+  warnings.warn(
+/usr/local/lib/python3.9/dist-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py:689: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .
+  warnings.warn(
+[2024-12-17 07:27:33,201] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2024-12-17 07:27:36,046][root][INFO] - x86_64-linux-gnu-gcc -pthread -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -ffile-prefix-map=/build/python3.9-RNBry6/python3.9-3.9.2=. -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -fPIC -c /tmp/tmpapyx1bvd/test.c -o /tmp/tmpapyx1bvd/test.o
+[2024-12-17 07:27:37,628][root][INFO] - x86_64-linux-gnu-gcc -pthread /tmp/tmpapyx1bvd/test.o -laio -o /tmp/tmpapyx1bvd/a.out
+[2024-12-17 07:27:41,007][root][INFO] - x86_64-linux-gnu-gcc -pthread -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -ffile-prefix-map=/build/python3.9-RNBry6/python3.9-3.9.2=. -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -fPIC -c /tmp/tmp1ihzso62/test.c -o /tmp/tmp1ihzso62/test.o
+[2024-12-17 07:27:42,469][root][INFO] - x86_64-linux-gnu-gcc -pthread /tmp/tmp1ihzso62/test.o -L/usr/local/cuda -L/usr/local/cuda/lib64 -lcufile -o /tmp/tmp1ihzso62/a.out
+step:29 - train/loss:0.010 - train/lr(1e-3):0.005
+step:30 - train/loss:0.011 - train/lr(1e-3):0.005
+step:31 - train/loss:0.010 - train/lr(1e-3):0.005
+step:32 - train/loss:0.017 - train/lr(1e-3):0.005
+step:33 - train/loss:0.011 - train/lr(1e-3):0.004
+step:34 - train/loss:0.006 - train/lr(1e-3):0.004
+step:35 - train/loss:0.009 - train/lr(1e-3):0.004
+step:36 - train/loss:0.009 - train/lr(1e-3):0.003
+step:37 - train/loss:0.013 - train/lr(1e-3):0.003
+step:38 - train/loss:0.007 - train/lr(1e-3):0.003
+step:39 - train/loss:0.010 - train/lr(1e-3):0.003
+step:40 - train/loss:0.013 - train/lr(1e-3):0.002
+step:41 - train/loss:0.012 - train/lr(1e-3):0.002
+step:42 - train/loss:0.008 - train/lr(1e-3):0.002
+step:43 - train/loss:0.008 - train/lr(1e-3):0.002
+step:44 - train/loss:0.015 - train/lr(1e-3):0.001
+step:45 - train/loss:0.008 - train/lr(1e-3):0.001
+step:46 - train/loss:0.011 - train/lr(1e-3):0.001
+step:47 - train/loss:0.010 - train/lr(1e-3):0.001
+step:48 - train/loss:0.009 - train/lr(1e-3):0.001
+step:49 - train/loss:0.004 - train/lr(1e-3):0.001
+step:50 - train/loss:0.008 - train/lr(1e-3):0.000
+step:51 - train/loss:0.010 - train/lr(1e-3):0.000
+step:52 - train/loss:0.007 - train/lr(1e-3):0.000
+step:53 - train/loss:0.013 - train/lr(1e-3):0.000
+step:54 - train/loss:0.011 - train/lr(1e-3):0.000
+step:55 - train/loss:0.010 - train/lr(1e-3):0.000
+step:56 - train/loss:0.011 - train/lr(1e-3):0.000
+step:57 - train/loss:0.017 - train/lr(1e-3):0.000
+step:58 - val/loss:0.411
+/usr/local/lib/python3.9/dist-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py:689: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .
+  warnings.warn(
+[1;34mwandb[0m: 🚀 View run [33mgsm8k-sft-gemma-2-2b-it[0m at: [34mhttps://wandb.ai/verl-team/gsm8k-sft/runs/qfm6f7w2[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20241217_072147-qfm6f7w2/logs[0m
